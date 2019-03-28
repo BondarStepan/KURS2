@@ -1,0 +1,6 @@
+{% load static %}
+        {% for i in comments %}
+            <li>{{ i.users }}</li>
+            <li>{{ i.containment }}</li>
+            <li>{{ i.likes }}<img class="like" name="{{ i.id }}" src="{% static 'media/like.png' %}" style="height:30px; width:30px;"></li>
+        {% endfor %}

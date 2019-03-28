@@ -1,0 +1,12 @@
+{% extends "polls/wrapper.html" %}
+{% block content %}
+<form id="category_form" method="post" action="/polls/new_era/">
+{% for field in form.visible_fields %}
+    <br>
+{{field}}
+{% endfor %}
+    <br>
+
+    <button class="big-button" type="submit" style="width: 100px; height: 200px;"></button>
+</form>
+{% endblock %}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="{% static 'polls/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'polls/js.cookie.js' %}"></script>
+    <script type="text/javascript" src="{% static 'polls/showdown.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}"/>
+
+    <script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}" ></script>
+    <title>Title</title>
+</head>
+<style id="styles">
+
+</style>
+<body>
+<script type="text/javascript">
+$(document).ready( function () {
+$('#table_id').DataTable();
+if('{{user_extend.language}}'=='False'){
+
+$('#Main_page')[0].innerHTML= 'Галоўная старонка';
+$('#sign_in')[0].innerHTML= 'Увасйці';
+$('#sign_up')[0].innerHTML= 'Зарэгістрыравацца';
+$('#search')[0].innerHTML= 'Пошук';
+$('#title')[0].innerHTML= 'Назва';
+$('#containment')[0].innerHTML= 'Змест';
+
+};
+if('{{user_extend.language}}'=='True'){
+
+$('#Main_page')[0].innerHTML= 'Главная страница';
+$('#sign_in')[0].innerHTML= 'Войти';
+$('#sign_up')[0].innerHTML= 'Зарегистрироваться';
+$('#search')[0].innerHTML= 'Поиск';
+$('#title')[0].innerHTML= 'Название';
+$('#containment')[0].innerHTML= 'Содержание';
+
+};
+if('{{user_extend.style}}'=='True'){
+
+$(document.body)[0].style = "background-color: blanchedalmond;"
+$('.btn')[0].style = "background-color: black;"
+$('.btn')[1].style = "background-color: black;"
+$('.btn')[2].style = "background-color: black;"
+$('.btn')[3].style = "background-color: black;"
+new_styles=".body{\nbackground-color: blanchedalmond;\n}\n.btn btn-secondary{\nbackground: black;\n}"
+$('#styles')[0].innerHTML=$('#styles').html()+new_styles;
+
+};
+if('{{user_extend.style}}'=='False'){
+$(document.body)[0].style = "background-color: aliceblue;"
+$('.btn')[0].style = "background-color: chocolate;"
+$('.btn')[1].style = "background-color: chocolate;"
+$('.btn')[2].style = "background-color: chocolate;"
+$('.btn')[3].style = "background-color: chocolate;"
+new_styles=".body{\nbackground-color: blanchedalmond;\n}\n.btn btn-secondary{\nbackground: black;\n}"
+$('#styles')[0].innerHTML=$('#styles').html()+new_styles;
+
+};
+} );
+</script>
+<div id="auth_group" class="btn-group" >
+    <button id="Main_page" type="button" class="btn btn-secondary" onclick="window.location.href='/polls/'">Main page</button>
+    <button id="sign_in" type="button" class="btn btn-secondary" onclick="window.location.href='/polls/signin/'">Sign in</button>
+    <button id="sign_up" type="button" class="btn btn-secondary" onclick="window.location.href='/polls/signup/'">sign up</button>
+    <button id="search" type="button" class="btn btn-secondary" onclick="window.location.href='/search/'">full text search</button>
+</div>
+<script >$(document).ready( function () {
+var csrftoken = Cookies.get('csrftoken');
+    $('#add_comment').click(
+    function(e){
+       $.get("/polls/add_comment", { containment: $('#containment')[0].value, compendium: "{{ compendium.id }}" }, function() {
+});
+});
+    converter = new showdown.Converter();
+    text      = $('#CM_contain').html();
+    html      = converter.makeHtml(text);
+$("#CM_contain")[0].innerHTML = html;
+ $.get('/polls/select_coments', { naming: $(this).html() }, function() {
+});
+});</script>
+<form action="/polls/save_compendium/" method="post" class="form-horizontal">
+    <div class="form-group">
+
+        <label id="title">Naming</label>
+        <div  id="CM_naming">{{ compendium }}</div>
+    </div>
+    <div class="form-group">
+
+        <label id="Containment">Containment</label>
+        <div id="CM_contain">{{ compendium.containment }}</div>
+    </div>
+    <div class="form-group">
+    </div>
+    {% csrf_token %}
+</form>
+
+</body>
+</html>

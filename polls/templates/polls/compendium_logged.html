@@ -1,0 +1,208 @@
+
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="{% static 'polls/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'polls/js.cookie.js' %}"></script>
+    <script type="text/javascript" src="{% static 'polls/showdown.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'polls/font-awesome.min.css' %}">
+    <script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}" ></script>
+    <title>Title</title>
+</head>
+<body>
+<style id="styles">
+#add_comment {
+    background-color: red;
+  color: white;
+  padding: 1em 1.5em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+#add_comment:hover {
+  background-color: #555;
+}
+
+#add_comment:active {
+  background-color: black;
+}
+
+#add_comment:visited {
+  background-color: #ccc;
+}
+.checked {
+    color: orange;
+}
+</style>
+<script type="text/javascript">
+$(document).ready( function () {
+$('#table_id').DataTable();
+if('{{user_extend.language}}'=='False'){
+
+$('#Private_office')[0].innerHTML= 'Личны кабінет';
+$('#Log_out')[0].innerHTML= 'Выйсті';
+$('#search')[0].innerHTML= 'Пошук';
+$('#title')[0].innerHTML= 'Назва';
+$('#containment_label')[0].innerHTML= 'Змест';
+$('#Coments_label')[0].innerHTML= 'Каментарыі';
+$('#Rating')[0].innerHTML= 'Рейтынг';
+
+};
+if('{{user_extend.language}}'=='True'){
+
+$('#Private_office')[0].innerHTML= 'Личный кабинет';
+$('#Log_out')[0].innerHTML= 'Выйти';
+$('#search')[0].innerHTML= 'Поиск';
+$('#title')[0].innerHTML= 'Название';
+$('#containment_label')[0].innerHTML= 'Содержание';
+$('#Coments_label')[0].innerHTML= 'Коментарии';
+$('#Rating')[0].innerHTML= 'Рейтинг';
+
+};
+if('{{user_extend.style}}'=='True'){
+$(document.body)[0].style = "background-color: blanchedalmond;"
+$('.btn')[0].style = "background-color: black;"
+$('.btn')[1].style = "background-color: black;"
+$('.btn')[2].style = "background-color: black;"
+
+new_styles=".body{\nbackground-color: blanchedalmond;\n}\n.btn btn-secondary{\nbackground: black;\n}"
+$('#styles')[0].innerHTML=$('#styles').html()+new_styles;
+
+};
+if('{{user_extend.style}}'=='False'){
+
+$(document.body)[0].style = "background-color: aliceblue;"
+$('.btn')[0].style = "background-color: chocolate;"
+$('.btn')[1].style = "background-color: chocolate;"
+$('.btn')[2].style = "background-color: chocolate;"
+
+new_styles=".body{\nbackground-color: blanchedalmond;\n}\n.btn btn-secondary{\nbackground: black;\n}"
+$('#styles')[0].innerHTML=$('#styles').html()+new_styles;
+
+};
+} );
+</script>
+<div id="auth_group" class="btn-group" >
+    <button id="Private_office" type="button" class="btn btn-secondary" onclick="window.location.href='/polls/private'">Private office</button>
+    <button id="Log_out" type="button" class="btn btn-secondary" onclick="window.location.href='/polls/logout'">Log out</button>
+    <button id="search" type="button" class="btn btn-secondary" onclick="window.location.href='/search/'">full text search</button>
+</div>
+<script >$(document).ready( function () {
+var csrftoken = Cookies.get('csrftoken');
+    $('.like').click(
+    function(e){
+    console.log($(this)[0].name);
+       $.get('/polls/save_like', { coment: $(this)[0].name }, function() {
+});
+});
+});</script>
+<form action="" method="post" class="form-horizontal">
+    <div class="form-group">
+
+        <label id="title">Naming</label>
+        <label  id="CM_naming">{{ compendium }}</label>
+
+    </div>
+    <div class="form-group">
+
+        <label id="Containment_label">Containment</label>
+        <br>
+        <div style="width:800px;height:700px;" id="CM_contain">{{ compendium.containment }}</div>
+        <h2 id="Rating">Rating</h2>
+
+        <!--<textarea name="text" rows="10" class="form-control" id="CM_contain"></textarea>-->
+        <img src ="{% static 'media/rate_empty.png' %}" style="width:20px; height:20px;" class="fa fa-star" id="star1" onclick="add(this,1)">
+        <img src ="{% static 'media/rate_empty.png'' %}" style="width:20px; height:20px;" class="fa fa-star" id="star2" onclick="add(this,2)">
+        <img src ="{% static 'media/rate_empty.png'' %}" style="width:20px; height:20px;" class="fa fa-star" id="star3" onclick="add(this,3)">
+        <img src ="{% static 'media/rate_empty.png'' %}" style="width:20px; height:20px;" class="fa fa-star" id="star4" onclick="add(this,4)">
+        <img src ="{% static 'media/rate_empty.png'' %}" style="width:20px; height:20px;" class="fa fa-star" id="star5" onclick="add(this,5)">
+        {{ compendium.rating }}
+        <script>
+var n;
+n=parseInt("{{ compendium.rating }}");
+for (var i=1;i<=n;i++){
+var cur=document.getElementById("star"+i)
+cur.className="fa fa-star"
+cur.src="{% static 'media/rate_full.png' %}";
+};
+function add(ths,sno){
+
+    $.get("/polls/change_rate", { compendium: '{{ compendium.id }}', rate: sno }, function() {
+});
+for (var i=1;i<=5;i++){
+var cur=document.getElementById("star"+i)
+cur.className="fa fa-star"
+cur.src="{% static 'media/rate_empty.png' %}";
+}
+
+for (var i=1;i<=sno;i++){
+var cur=document.getElementById("star"+i)
+if(cur.className=="fa fa-star")
+{
+cur.className="fa fa-star checked"
+cur.src="{% static 'media/rate_full.png' %}";
+}
+}
+
+}
+</script>
+    </div>
+
+    <script >$(document).ready( function () {
+var csrftoken = Cookies.get('csrftoken');
+    $('#add_comment').click(
+    function(e){
+       $.get("/polls/add_comment", { containment: $('#containment')[0].value, compendium: "{{ compendium.id }}" }, function() {
+});
+});
+    converter = new showdown.Converter();
+    text      = $('#CM_contain').html();
+    html      = converter.makeHtml(text);
+$("#CM_contain")[0].innerHTML = html;
+ $.get('/polls/select_coments', { naming: $(this).html() }, function() {
+});
+});</script>
+
+    <div class="form-group">
+        <textarea id="containment" style="height:300px;width:500px;"></textarea>
+        <br>
+        <a id="add_comment" type="button" >Add comment</a>
+
+        <br>
+        <label id="Coments_label">Coments</label>
+        <script>
+
+      setInterval(function(){
+      $.get("/polls/refresh_comment", { compendium: '{{ compendium.id }}', latest_comment: '{{ latest_comment.id }}' }, function(e) {
+      $('#refreshed_comments')[0].innerHTML = e;
+ $('.like').click(
+    function(e){
+    console.log($(this)[0].name);
+       $.get('/polls/save_like', { coment: $(this)[0].name }, function() {
+});
+});
+});
+}, 3000);
+
+</script>
+        <ul id="coments" style="
+    overflow: scroll;
+    padding: 0;
+    list-style-type: none">
+            {% for i in coments %}
+            <li>{{ i.users }}</li>
+            <li>{{ i.containment }}</li>
+            <li>{{ i.likes }}<img class="like" name="{{ i.id }}" src="{% static 'media/like.png' %}" style="height:30px; width:30px;"></li>
+            {% endfor %}
+            <li id="refreshed_comments"></li>
+        </ul>
+    </div>
+    {% csrf_token %}
+</form>
+
+</body>
+</html>

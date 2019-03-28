@@ -1,0 +1,190 @@
+{% load static %}
+<script type="text/javascript" src="{% static 'polls/jquery-3.3.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'polls/showdown.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}"/>
+
+<script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}" ></script>
+
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+    <script>
+      {% block javascript %}{% endblock %}
+    </script>
+</head>
+
+
+<body>
+<style id="styles">
+.checked {
+    color: orange;
+}
+#tegcloud
+{
+    width:200px;
+   max-height:300px;
+}
+ p{
+ color: chocolate;
+ }
+container{
+justify-content: flex-end;
+}
+.btn-group{
+position: absolute;
+right: 0;
+}
+</style>
+
+<div id="tegcloud" class="col-lg-offset-4 col-lg-4">
+    {% for i in tags %}
+    <a href=""><font size="{{ i.count }}">{{ i.name }}</font></a>
+    {% endfor %}
+</div>
+<br>
+
+<!--Drag function-->
+<script type="text/javascript">
+function startDrag(e) {
+            // determine event object
+            if (!e) {
+                var e = window.event;
+            }
+            //if(e.preventDefault) e.preventDefault();
+
+            // IE uses srcElement, others use target
+            targ = e.target ? e.target : e.srcElement;
+
+          if (targ.className != 'drag_text'){
+          if (targ.className != 'drag_pict') {return};
+          }
+
+            // calculate event X, Y coordinates
+                offsetX = e.clientX;
+                offsetY = e.clientY;
+
+            // assign default values for top and left properties
+            if(!targ.style.left) { targ.style.left='0px'};
+            if (!targ.style.top) { targ.style.top='0px'};
+
+            // calculate integer values for top and left
+            // properties
+            coordX = parseInt(targ.style.left);
+            coordY = parseInt(targ.style.top);
+            drag = true;
+
+            // move div element
+                document.onmousemove=dragDiv;
+                if (targ.className == 'drag_pict') {e.preventDefault()};
+
+          //  return false;
+
+        }
+        function dragDiv(e) {
+            if (!drag) {return};
+            if (!e) { var e= window.event};
+            // var targ=e.target?e.target:e.srcElement;
+            // move div element
+            targ.style.left=coordX+e.clientX-offsetX+'px';
+            targ.style.top=coordY+e.clientY-offsetY+'px';
+            return false;
+        }
+        function stopDrag() {
+            drag=false;
+        }
+        window.onload = function() {
+            document.onmousedown = startDrag;
+            document.onmouseup = stopDrag;
+        }
+</script>
+
+
+<div id="auth_group" class="btn-group" >
+    <button id="Private_office" type="button" class="btn btn-secondary" onclick="window.location.href='/polls/private'">Private office</button>
+    <button id="Log_out" type="button" class="btn btn-secondary" onclick="window.location.href='/polls/logout'">Log out</button>
+    <button id="search" type="button" class="btn btn-secondary" onclick="window.location.href='/search/'">full text search</button>
+</div>
+
+<br>
+<br>
+<script type="text/javascript">
+$(document).ready( function () {
+$('#table_id').DataTable();
+if('{{user_extend.language}}'=='False'){
+
+$('#search')[0].innerHTML= 'Пошук';
+$('#Private_office')[0].innerHTML= 'Личны кабінет';
+$('#Log_out')[0].innerHTML= 'Выйсті';
+$('#change_language').innerHTML= 'Змена гутаркі';
+$('#change_theme').innerHTML= 'Змена стылю';
+$('#title').innerHTML= 'Назва';
+$('#Publisher').innerHTML= 'Автар';
+$('#Last_changed').innerHTML= 'Паследняе абнавление';
+$('#Rating').innerHTML= 'Рейтынг';
+
+};
+if('{{user_extend.language}}'=='True'){
+
+$('#Private_office')[0].innerHTML= 'Личный кабинет';
+$('#Log_out')[0].innerHTML= 'Выйти';
+$('#search')[0].innerHTML= 'Поиск';
+$('#change_language').innerHTML= 'Сменить язык';
+$('#change_theme').innerHTML= 'Сменить стиль';
+$('#title').innerHTML= 'Название';
+$('#Publisher').innerHTML= 'Автор';
+$('#Last_changed').innerHTML= 'Последнее обновление';
+$('#Rating').innerHTML= 'Рейтинг';
+
+};
+if('{{user_extend.style}}'=='True'){
+$(document.body)[0].style = "background-color: blanchedalmond;"
+$('.btn')[0].style = "background-color: black;"
+$('.btn')[1].style = "background-color: black;"
+$('.btn')[2].style = "background-color: black;"
+$('.btn')[3].style = "background-color: black;"
+new_styles=".body{\nbackground-color: blanchedalmond;\n}\n.btn btn-secondary{\nbackground: black;\n}"
+$('#styles')[0].innerHTML=$('#styles').html()+new_styles;
+
+};
+if('{{user_extend.style}}'=='False'){
+
+$(document.body)[0].style = "background-color: aliceblue;"
+$('.btn')[0].style = "background-color: chocolate;"
+$('.btn')[1].style = "background-color: chocolate;"
+$('.btn')[2].style = "background-color: chocolate;"
+$('.btn')[3].style = "background-color: chocolate;"
+new_styles=".body{\nbackground-color: blanchedalmond;\n}\n.btn btn-secondary{\nbackground: black;\n}"
+$('#styles')[0].innerHTML=$('#styles').html()+new_styles;
+
+};
+} );
+</script>
+
+<table id="table_id" class="display">
+    <thead>
+    <tr>
+        <th id="title">Title</th>
+        <th id="Publisher">Publisher</th>
+        <th id="Last_changed">Last changed</th>
+        <th id="Rating">Rating</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in compendium %}
+    <tr>
+        <td><a class="comped" id="{{ i.naming }}" href="/polls/{{ i.id }}/view_compendium_logged"
+               name="naming" >{{ i }}</a></td>
+        <td>{{ i.users }}</td>
+        <td>{{ i.change_date }}</td>
+        <td>{{ i.rating }}</td>
+
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

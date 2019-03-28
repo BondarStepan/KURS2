@@ -1,0 +1,390 @@
+{% load static %}
+{% load cloudinary %}
+{% load tagging_tags %}
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="{% static 'polls/jquery-3.3.1.min.js' %}"></script>
+    {% cloudinary_includes %}
+    {% cloudinary_js_config %}
+    <script type="text/javascript" src="{% static 'polls/js.cookie.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'polls/dropzone.css' %}"/>
+    <script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}" ></script>
+    <script src="{% static '/polls/dropzone.js' %}"></script>
+    <title>{% block title %}{% endblock %}</title>
+    <style id="styles" type="text/css">
+
+#tegcloud
+{
+    width:200px;
+   max-height:300px;
+}
+.btn-group{
+position: absolute;
+right: 0;
+top: 0;
+}
+.mainImgURL {
+position:relative;
+    width: 500px;
+    height: 400px;
+}
+    .drag_text {
+        position:relative;
+        cursor: move;
+        background-color: transparent;
+    }
+        .drag_pict {
+        position:relative;
+        cursor: move;
+        background-color: transparent;
+    }
+    .upload_widget_opener
+    {
+    position: relative;
+    }
+    ul {
+    max-height: 100px;
+    max-inline-size: 100px;
+    overflow: scroll;
+    padding: 0;
+    list-style-type: none;
+}
+.box__dragndrop,
+.box__uploading,
+.box__success,
+.box__error {
+  display: none;
+}
+.upload-drop-zone {
+  height: 200px;
+  border-width: 2px;
+  margin-bottom: 20px;
+}
+
+/* skin.css Style*/
+.upload-drop-zone {
+  color: #ccc;
+  border-style: dashed;
+  border-color: #ccc;
+  line-height: 200px;
+  text-align: center
+}
+.upload-drop-zone.drop {
+  color: #222;
+  border-color: #222;
+}
+</style>
+
+    <script>
+
+      {% block javascript %}{% endblock %}
+    </script>
+</head>
+
+
+<body>
+<script type="text/javascript">
+$(document).ready( function () {
+$('#table_id').DataTable();
+if('{{user_extend.language}}'=='False'){
+
+$('#search')[0].innerHTML= 'Пошук';
+$('#Log_out').innerHTML= 'Выйсті';
+$('#CM_naming')[0].innerHTML= 'Назва';
+$('#change_language')[0].innerHTML= 'Змена гутаркі';
+$('#change_theme')[0].innerHTML= 'Змена стылю';
+$('#Main_page')[0].innerHTML= 'Главная страница';
+$('#FIO')[0].innerHTML= 'ФІО';
+$('#University')[0].innerHTML= 'Універсітэт';
+$('#Faculty')[0].innerHTML= 'Факультэт';
+$('#Speciality')[0].innerHTML= 'Спецыяльнасць';
+$('#Select')[0].innerHTML= 'Выбраць';
+$('#Naming_th')[0].innerHTML= 'Назва';
+$('#Containment_th')[0].innerHTML= 'Змест';
+$('#Tags_th')[0].innerHTML= 'Тэгі';
+$('#Naiming_label').innerHTML= 'Назва';
+$('#Containment_label')[0].innerHTML= 'Змест';
+$('#Tags_label').innerHTML= 'Тэгі';
+$('#Last_changed').innerHTML= 'Паследняе абнавление';
+$('#Rating').innerHTML= 'Рейтынг';
+
+};
+if('{{user_extend.language}}'=='True'){
+
+$('#search')[0].innerHTML= 'Поиск';
+$('#Log_out')[0].innerHTML= 'Выйти';
+$('#Main_page')[0].innerHTML= 'Главная страніца';
+$('#change_language')[0].innerHTML= 'Сменить язык';
+$('#change_theme')[0].innerHTML= 'Сменить стиль';
+$('#FIO')[0].innerHTML= 'ФИО';
+$('#CM_naming')[0].innerHTML= 'Название';
+$('#University')[0].innerHTML= 'Университет';
+$('#Faculty')[0].innerHTML= 'Факультет';
+$('#Speciality')[0].innerHTML= 'Специальность';
+$('#Select')[0].innerHTML= 'Выбрать';
+$('#Naming_th')[0].innerHTML= 'Название';
+$('#Containment_th')[0].innerHTML= 'Содержание';
+$('#Tags_th')[0].innerHTML= 'Теги';
+$('#Naiming_label').innerHTML= 'Название';
+$('#Containment_label').innerHTML= 'Содержание';
+$('#Tags_label').innerHTML= 'Теги';
+$('#Last_changed').innerHTML= 'Паследняе абнавление';
+$('#Rating').innerHTML= 'Рейтинг';
+
+};
+if('{{user_extend.style}}'=='True'){
+$(document.body)[0].style = "background-color: blanchedalmond;"
+$('.btn')[0].style = "background-color: black;"
+$('.btn')[1].style = "background-color: black;"
+$('.btn')[2].style = "background-color: black;"
+$('.btn')[3].style = "background-color: black;"
+$('.btn')[4].style = "background-color: black;"
+new_styles=".body{\nbackground-color: blanchedalmond;\n}\n.btn btn-secondary{\nbackground: black;\n}"
+$('#styles')[0].innerHTML=$('#styles').html()+new_styles;
+
+};
+if('{{user_extend.style}}'=='False'){
+
+$(document.body)[0].style = "background-color: aliceblue;"
+$('.btn')[0].style = "background-color: chocolate;"
+$('.btn')[1].style = "background-color: chocolate;"
+$('.btn')[2].style = "background-color: chocolate;"
+$('.btn')[3].style = "background-color: chocolate;"
+$('.btn')[4].style = "background-color: chocolate;"
+new_styles=".body{\nbackground-color: blanchedalmond;\n}\n.btn btn-secondary{\nbackground: black;\n}"
+$('#styles')[0].innerHTML=$('#styles').html()+new_styles;
+
+};
+} );
+</script>
+
+
+
+<div id="auth_group" class="btn-group" >
+    <button id="Main_page" type="button" class="btn btn-secondary" onclick="window.location.href='/polls/logged'">Main page</button>
+    <button id="Log_out" type="button" class="btn btn-secondary" onclick="window.location.href='/polls/logout'">Log out</button>
+    <button id='change_language' type="button" class="btn btn-secondary" onclick="window.location.href='/polls/change_language'">Change language</button>
+    <button id='change_theme' type="button" class="btn btn-secondary" onclick="window.location.href='/polls/change_theme'">Change theme</button>
+    <button id="search" type="button" class="btn btn-secondary" onclick="window.location.href='/search/'">full text search</button>
+</div>
+<p id="name_source" hidden>{{ username }}</p>
+
+<script type="text/javascript">
+$(document).ready( function () {
+var csrftoken = Cookies.get('csrftoken');
+    $('.in-place').change(
+    function(e){
+    $.get('/polls/change_val', { name: $('#name_source').html(), value_0: $('.in-place')[0].value,
+     value_1: $('.in-place')[1].value, value_2: $('.in-place')[2].value,
+      value_3: $('.in-place')[3].value }, function() {
+});
+});
+});
+</script>
+
+<label id="FIO">FIO</label>
+<input type="text" class="in-place" id="1" value="{{ user_extend.Fio }}"  style="border: none; width: 300;">
+<br>
+<label id="University">University</label>
+<input class="in-place" id="2" value="{{ user_extend.University }}" style="border: none">
+<br>
+<label id="Faculty">Faculty</label>
+<input class="in-place" id="3" value="{{ user_extend.Faculty }}" style="border: none">
+<br>
+<label id="Speciality">Speciality</label>
+<input  class="in-place" id="4" value="{{ user_extend.Speciality }}" style="border: none">
+
+
+<script type="text/javascript">
+$(document).ready( function () {
+    $('#table_id').DataTable();
+} );
+</script>
+<script type="text/javascript">
+$(document).ready( function () {
+$(".comped").click( function () {
+$("#CM_contain")[0].innerHTML = $(this).attr('value');
+$("#CM_naming")[0].innerHTML = $(this).html();
+
+} );
+} );
+</script>
+<form action="/polls/delete" method="post" class="form-horizontal">
+    <table id="table_id" class="display">
+        <thead>
+        <tr>
+            <th id="Select">Select</th>
+            <th id="Naming_th">Naming</th>
+            <th id="Containment_th">Containment</th>
+            <th id="Tags_th">Tags</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in compendium %}
+        <tr>
+            <td> <input type="checkbox" class="from-check-input" name='{{ i.naming }}'></td>
+            <td><a class="comped" id="{{ i.naming }}" value="{{ i.containment }}" href=""
+                   data-toggle="modal" data-target="#compedModal" name="naming" >{{ i }}</a></td>
+            <td>{{ i.containment }}</td>
+            <td>{{ i.tags }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-default">Delete selected</button>
+    {% csrf_token %}
+</form>
+
+<button id="modal_trigger" class="btn btn-info btn-lg" type="button" data-toggle="modal" data-target="#myModal">Add compendium.</button>
+
+<div id="compedModal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header"><button class="close" type="button" data-dismiss="modal">×</button>
+            </div>
+            <div class="modal-body">
+
+                <form action="/polls/save_compendium/" method="post" class="form-horizontal">
+                    <div class="form-group">
+
+                        <label id="Naming_label">Naming</label>
+                        <textarea name="naming" class="form-control" id="CM_naming"></textarea>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label id="Containment_label">Containment</label>
+                        <textarea name="text" rows="10" class="form-control" id="CM_contain"></textarea>
+
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">Save</button>
+                    </div>
+
+
+                    {% csrf_token %}
+                </form>
+
+            </div>
+            <div class="modal-footer"><button class="btn btn-default" type="button" data-dismiss="modal">Закрыть</button></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready( function () {
+var tags = [];
+{% for i in tags %}
+tags.push("{{ i }}");
+{% endfor %}
+var lastIndex;
+var str;
+
+$('#tags').keyup(function () {
+$('#auto_suggest')[0].innerHTML = '';
+str=$('#tags').val();
+lastIndex = str.lastIndexOf(' ');
+last_word = str.substring(lastIndex+1, str.length);
+console.log(lastIndex)
+console.log(last_word)
+console.log(str.length)
+if (last_word.length>0)
+{
+tags.forEach(function(element) {
+  if(element.indexOf(last_word) != -1)
+  {
+var newListItem = $("<li><input type='button' class='auto_suggest_select' value ="+element+"></li>").on('click', function () {
+str=$('#tags').val();
+str = str.substring(0, str.lastIndexOf(last_word))+element+' ';
+$('#tags')[0].value = str;
+$('#auto_suggest')[0].innerHTML = '';
+});
+
+$('#auto_suggest')[0].append(newListItem[0]);
+  }
+});
+}
+});
+});
+</script>
+<script>
+    Dropzone.autoDiscover = false;
+    $('#modal_trigger').click( function(){
+    $(document).ready(function($) {
+    console.log($('#my-awesome-dropzone'));
+
+    var myDropzone = new Dropzone("#my-awesome-dropzone");
+    Dropzone.options.myDropzone = false;
+    var count=parseInt("{{ user_extend.images_counter }}");
+    myDropzone.on("addedfile", function(file) {
+    var text = ($('#containment').val());
+    text += "![Your_image](https://res.cloudinary.com/urlcloudinaryurl/image/upload/"+"{{ username }}"+
+    count+".jpg)";
+    $('#containment')[0].value = text;
+    count+=1;
+    });
+    });
+    });
+</script>
+
+<div id="myModal" class="modal fade in" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel"  >
+
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+
+            <div class="modal-body">
+                <button class="close" type="button" data-dismiss="modal">×</button>
+                <form action="/polls/add_compendium/" id="add_compendium" method="post" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="naming">Naming</label>
+                        <input name="naming" type="text" class="form-control" id="naming" >
+                    </div>
+                    <div class="form-group">
+                        <label for="short">Short</label>
+                        <input name="short" type="text" class="form-control" id="short" >
+                    </div>
+                    <div class="form-group">
+                        <label for="containment">Content</label>
+                        <textarea name="containment" class="form-control" id="containment" style="height:500px;" ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="tags">Tags</label>
+                        <input autocomplete="off" name="tags" type="text" class="form-control" id="tags" >
+                        <ul id="auto_suggest">
+
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">Add compendium</button>
+                    </div>
+
+                    {% csrf_token %}
+                </form>
+                <form action="/polls/send_picture"
+                      class="dropzone"
+                      id="my-awesome-dropzone">{% csrf_token %}</form>
+            </div>
+            <div class="modal-footer"><button class="btn btn-default" type="button" data-dismiss="modal">Закрыть</button></div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
